@@ -1,0 +1,3 @@
+from ExtracaoConhecimento.agrupamento import Agrupamento 
+from ExtracaoConhecimento.compreensaoSemantica import CompreensaoSemantica 
+from ExtracaoConhecimento.compreensaoEmocional import CompreensaoEmocional 

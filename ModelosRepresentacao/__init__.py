@@ -1,0 +1,4 @@
+from ModelosRepresentacao.modelosEstatisticos import ModelosEstatisticos
+from ModelosRepresentacao.sentenceEmbeddings import SentenceEmbeddings
+from ModelosRepresentacao.wordEmbeddings import WordEmbeddings
+
