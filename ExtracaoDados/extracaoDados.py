@@ -10,10 +10,10 @@ Authors:
 Updated in Sep 28th , 2022.
 
 """
-#from tweepy.streaming import StreamListener
-#from tweepy import OAuthHandler
-#from tweepy import Stream
+
+from tqdm import tqdm
 import tweepy
+import praw
 import json
 import pandas as pd 
 import time
@@ -22,10 +22,10 @@ import os
 tweets = []
 
 class TwitterListener(tweepy.StreamingClient):
+    
     def on_connect(self):
         self.running = True
         print("Conectado")
-
 
     def on_data(self, data):
         global tweets
@@ -36,9 +36,9 @@ class TwitterListener(tweepy.StreamingClient):
             else:
                 print("Salvando 10 novos tweets no disco ...")
                 if os.path.exists("tweets.json"):
-                    with open("tweets.json", "r") as tweet_file:
+                    with open("data/tweets.json", "r") as tweet_file:
                         tweets += json.load(tweet_file)
-                with open("tweets.json", "w") as tweet_file:
+                with open("data/tweets.json", "w") as tweet_file:
                     json.dump(tweets, tweet_file, indent=2)
                 self.running = False
         time.sleep(0.2)
@@ -46,8 +46,7 @@ class TwitterListener(tweepy.StreamingClient):
 
 class ExtracaoDados:
 
-    def __init__(self, metodo):
-        self.metodo = metodo
+    def __init__(self):
         pass
 
     
@@ -61,7 +60,7 @@ class ExtracaoDados:
         stream.add_rules(tweepy.StreamRule('nyc'))
         stream.filter(tweet_fields=["created_at", "entities", "geo", "lang", "public_metrics", "source"])
 
-        with open("tweets.json", "r") as tweet_file:
+        with open("data/tweets.json", "r") as tweet_file:
             tweets = json.load(tweet_file)
             data = [{
                 "id": item["id"],
@@ -78,5 +77,32 @@ class ExtracaoDados:
         tweets = []
         return pd.DataFrame(data)
 
-    def reddit(self):
-        return pd.Series()
+    def reddit(self, CLIENT_ID, CLIENT_SECRET, subreddits=[], top_n=10, save_to='data/reddit_posts.csv'):
+        
+        # create Reddit client
+        reddit = praw.Reddit(
+            client_id=CLIENT_ID, 
+            client_secret=CLIENT_SECRET, 
+            user_agent='webmedia'
+        )
+
+        # get top_n hottest posts from each subreddit
+        posts = []
+        for subreddit in tqdm(subreddits):
+            for post in reddit.subreddit(subreddit).top('all', limit=top_n):
+
+                posts.append({
+                    'created': post.created,
+                    'url': post.url, 
+                    'title': post.title, 
+                    'score': post.score, # number of upvotes
+                    'num_comments': post.num_comments,
+                    'text': post.selftext,
+                    'length': len(post.selftext)
+                })
+
+        # create and persist dataframe
+        df_posts = pd.DataFrame(posts)
+        df_posts.to_csv(save_to)
+
+        return df_posts
