@@ -12,6 +12,7 @@ Updated in Sep 28th , 2022.
 """
 
 from tqdm import tqdm
+import requests
 import tweepy
 import praw
 import json
@@ -42,7 +43,6 @@ class TwitterListener(tweepy.StreamingClient):
                     json.dump(tweets, tweet_file, indent=2)
                 self.running = False
         time.sleep(0.2)
-
 
 class ExtracaoDados:
 
@@ -92,11 +92,11 @@ class ExtracaoDados:
             for post in reddit.subreddit(subreddit).top('all', limit=top_n):
 
                 posts.append({
-                    'created': post.created,
+                    'created_at': post.created,
                     'url': post.url, 
                     'title': post.title, 
                     'score': post.score, # number of upvotes
-                    'num_comments': post.num_comments,
+                    #'num_comments': post.num_comments,
                     'text': post.selftext,
                     'length': len(post.selftext)
                 })
@@ -106,3 +106,35 @@ class ExtracaoDados:
         df_posts.to_csv(save_to)
 
         return df_posts
+
+    def facebook(self, API_TOKEN, search_term, start_date, end_date, save_to='data/facebook_posts.csv'):
+
+        # prepare API request
+        api_url = 'https://api.crowdtangle.com/posts?token=' + API_TOKEN
+        api_url += '&searchTerm=' + search_term
+        api_url += '&count=' + str(100) # the API allow a maximun of 100 posts per query
+        api_url += '&language=en'
+        api_url += '&startDate=' + start_date
+        api_url += '&endDate=' + end_date
+
+        response = requests.get(api_url)
+        data = response.json()
+        
+        # transform response
+        posts = []
+        for post in data['result']['posts']:
+            posts.append({
+                'created_at': post['date'],
+                'url': post['postUrl'],
+                'title': None,
+                'score': post['statistics']['actual']['likeCount'], 
+                'text': post['message'],
+                'length': len(post['message'])
+            })
+
+        # create and persist dataframe
+        df_posts = pd.DataFrame(posts)
+        df_posts.to_csv(save_to)
+        
+        return df_posts
+        
