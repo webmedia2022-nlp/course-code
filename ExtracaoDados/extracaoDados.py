@@ -35,7 +35,7 @@ class TwitterListener(tweepy.StreamingClient):
                 tweets.append(data["data"])
             else:
                 print("Salvando 10 novos tweets no disco ...")
-                if os.path.exists("tweets.json"):
+                if os.path.exists("data/tweets.json"):
                     with open("data/tweets.json", "r") as tweet_file:
                         tweets += json.load(tweet_file)
                 with open("data/tweets.json", "w") as tweet_file:
@@ -71,7 +71,8 @@ class ExtracaoDados:
                 "like_count": item["public_metrics"]["like_count"],
                 "quote_count": item["public_metrics"]["quote_count"],
                 "source": item["source"],
-                "text": item["text"]
+                "text": item["text"],
+                "length":len(item["text"])
                 } for item in tweets]
 
         tweets = []
@@ -92,7 +93,7 @@ class ExtracaoDados:
             for post in reddit.subreddit(subreddit).top('all', limit=top_n):
 
                 posts.append({
-                    'created': post.created,
+                    'created_at': post.created,
                     'url': post.url, 
                     'title': post.title, 
                     'score': post.score, # number of upvotes
