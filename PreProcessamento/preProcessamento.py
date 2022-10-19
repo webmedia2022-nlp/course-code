@@ -1,7 +1,9 @@
-import pandas as pd 
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
+from tqdm import tqdm
+import pandas as pd 
+import keras.utils as np_utils
 import spacy 
 import re
 
@@ -49,3 +51,13 @@ class PreProcessamento:
         texto = re.sub(padrao, " {valor} ".format(valor=valor), texto)
 
         return texto
+
+    def onehot_encoder(self, y, classes):
+        array = []
+        for label in tqdm(y):
+            array.append(classes.index(label))
+
+        # convert class labels to one-hot encoding
+        onehot = np_utils.to_categorical(array, num_classes=len(classes))
+        encoded_data = np.array(onehot)
+        return encoded_data
