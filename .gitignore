@@ -1,3 +1,5 @@
+data/ 
+data/*.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -130,3 +132,4 @@ dmypy.json
 
 # Others
 data/
+*.slides.html
