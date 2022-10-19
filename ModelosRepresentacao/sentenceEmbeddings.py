@@ -21,10 +21,7 @@ import pandas as pd
 import os
 import nltk
 
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+
 
 from pathlib import Path
 

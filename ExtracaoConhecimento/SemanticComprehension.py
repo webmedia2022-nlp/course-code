@@ -10,25 +10,40 @@ Authors:
 Updated in Sep 28th , 2022.
 
 """
+from Preprocessing import Preprocessing
+from ModelosRepresentacao import SentenceEmbeddings
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegressionCV
+
+from keras.models import Model
+from keras.layers import Input, Embedding, LSTM, Dense, Dropout
+from keras.layers.wrappers import Bidirectional
+
+from sklearn.model_selection import StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set(font_scale=2.0)
+
 import pandas as pd 
+import numpy as np
 
-class CompreensaoSemantica:
+class SemanticComprehension:
 
     def __init__(self):
         pass
 
-    def treinamento_intencoes(self, algorithm="labse", sentences, intents):
-        ## One-hot encoding of target classes
+    def training_intents(self, algorithm, sentences, intents):
         intent_classes = list(set(intents))
-        y = PreProcessamento("").onehot_encoder(intents, intent_classes)
-
+        y = Preprocessing().target_encoder(intents, intent_classes)
         if algorithm == "labse":
+            y = Preprocessing().target_encoder(intents, intent_classes)
             model, X_test, y_test = self.labse_model(sentences, y)
         elif algorithm == "bilstm":
-            model, X_test, y_test = self.bilstm_model(sentences, y)
+            ## One-hot encoding of target classes
+            onehot_y = Preprocessing().onehot_encoder(intents, intent_classes)
+            model, X_test, y_test = self.bilstm_model(sentences, y, onehot_y, len(intent_classes))
         else:
             print("O valor do parâmetro 'algorithm' informado não é válido. Escolha entre 'labse' e 'bilstm'.")
             return
@@ -36,8 +51,9 @@ class CompreensaoSemantica:
         return model, X_test, y_test, intent_classes
 
 
-    def bilstm_model(self, sentences, y, n_classes):
+    def bilstm_model(self, sentences, y, onehot_y, n_classes):
         max_seq_len = 280 # max tweet length
+        vocab_size = 30522
         
         ## Bidirectional LSTM layer
         inputs = Input(shape=(max_seq_len,), dtype='int32', name="input_ids")
@@ -52,6 +68,21 @@ class CompreensaoSemantica:
         softmax = Dense(units=n_classes, activation='softmax')(lstm)
         model = Model(inputs=inputs, outputs=softmax, name='intent_model')
         model.compile(loss='categorical_crossentropy', optimizer='RMSprop', metrics=["accuracy"])
+        
+
+        X = Preprocessing().encoding_sentences(sentences, max_seq_len)
+        print(X.shape)
+
+        ## Separa os dados para o treinamento e teste
+        skf = StratifiedKFold(n_splits=2)
+
+
+        for train_index, test_index in skf.split(X, y):
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = onehot_y[train_index], onehot_y[test_index]
+
+
+
         history = model.fit(x=X_train,
                             y=y_train,
                             batch_size=32,
@@ -70,10 +101,14 @@ class CompreensaoSemantica:
         X = SentenceEmbeddings().labse(sentences)
 
         ## Separa os dados para o treinamento e teste
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+        skf = StratifiedKFold(n_splits=2)
+        for train_index, test_index in skf.split(X, y):
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+
 
         # Treinar o modelo
-        model = LogisticRegressionCV(cv=5, random_state=27).fit(X_train, y_train)
+        model = RandomForestClassifier(max_depth=5, random_state=0).fit(X_train, y_train)
         print("Acurracy: ", model.score(X_test, y_test))
         return model, X_test, y_test
 
@@ -89,15 +124,32 @@ class CompreensaoSemantica:
 
         predicted_intents = []
         for i in range(len(y_hat)):
-        predicted_intents.append({
-        "text": sentences[i],
-        "intent": intent_classes[y_hat[i]],
-        "confidence":confidence[i]
-        })
+            predicted_intents.append({
+            "text": sentences[i],
+            "intent": intent_classes[y_hat[i]],
+            "confidence":confidence[i]
+            })
 
         intents = pd.DataFrame(predicted_intents)
         return intents
 
     
+
+    def plot_confusion_matrix(self, y_test, y_hat, classes, fname):
+        cm = confusion_matrix(y_test, y_hat, normalize='true')
+        df_cm = pd.DataFrame(cm, index=classes, columns=classes)
+        
+        fig, ax = plt.subplots(figsize=(20, 15))
+        hmap = sns.heatmap(df_cm, ax=ax, annot=True, fmt=".2")
+        hmap.yaxis.set_ticklabels(hmap.yaxis.get_ticklabels(), rotation=0, ha='right')
+        hmap.xaxis.set_ticklabels(hmap.xaxis.get_ticklabels(), rotation=30, ha='right')
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        plt.tight_layout()
+        plt.savefig(fname)
+        plt.close()
+        return
+
+
     def extracao_entidades(self):
         pass
