@@ -13,7 +13,7 @@ Updated in Sep 28th , 2022.
 
 import pandas as pd 
 
-class Agrupamento:
+class Clustering:
 
     def __init__(self):
         pass

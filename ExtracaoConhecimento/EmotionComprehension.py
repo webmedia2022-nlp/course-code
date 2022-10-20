@@ -13,13 +13,13 @@ Updated in Sep 28th , 2022.
 
 import pandas as pd 
 
-class CompreensaoEmocional:
+class EmotionComprehension:
 
     def __init__(self):
         pass
 
-    def analise_sentimento(self):
+    def sentiment_analysis(self):
         pass
 
-    def analise_toxicidade(self):
+    def toxicity_analysis(self):
         pass

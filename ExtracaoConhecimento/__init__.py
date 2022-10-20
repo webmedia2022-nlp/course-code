@@ -1,3 +1,3 @@
-from ExtracaoConhecimento.agrupamento import Agrupamento 
-from ExtracaoConhecimento.compreensaoSemantica import CompreensaoSemantica 
-from ExtracaoConhecimento.compreensaoEmocional import CompreensaoEmocional 
+from ExtracaoConhecimento.Clustering import Clustering 
+from ExtracaoConhecimento.SemanticComprehension import SemanticComprehension 
+from ExtracaoConhecimento.EmotionComprehension import EmotionComprehension 
