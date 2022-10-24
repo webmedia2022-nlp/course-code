@@ -44,7 +44,7 @@ class TwitterListener(tweepy.StreamingClient):
                 self.running = False
         time.sleep(0.2)
 
-class ExtracaoDados:
+class DataExtraction:
 
     def __init__(self):
         pass
@@ -63,16 +63,18 @@ class ExtracaoDados:
         with open("data/tweets.json", "r") as tweet_file:
             tweets = json.load(tweet_file)
             data = [{
-                "id": item["id"],
+                #"id": item["id"],
                 "created_at": item["created_at"],
-                "geo": item["geo"],
-                "retweet_count": item["public_metrics"]["retweet_count"],
-                "reply_count": item["public_metrics"]["reply_count"],
-                "like_count": item["public_metrics"]["like_count"],
-                "quote_count": item["public_metrics"]["quote_count"],
-                "source": item["source"],
+                "url": "https://twitter.com/anyuser/status/" + item["id"],
+                #"retweet_count": item["public_metrics"]["retweet_count"],
+                #"reply_count": item["public_metrics"]["reply_count"],
+                #"like_count": item["public_metrics"]["like_count"],
+                #"quote_count": item["public_metrics"]["quote_count"],
+                #"source": item["source"],
+                "score": item["public_metrics"]["like_count"],
                 "text": item["text"],
-                "length":len(item["text"])
+                "length":len(item["text"]),
+                "geo": item["geo"]
                 } for item in tweets]
 
         tweets = []
@@ -95,7 +97,7 @@ class ExtracaoDados:
                 posts.append({
                     'created_at': post.created,
                     'url': post.url, 
-                    'title': post.title, 
+                    #'title': post.title, 
                     'score': post.score, # number of upvotes
                     #'num_comments': post.num_comments,
                     'text': post.selftext,
@@ -127,7 +129,7 @@ class ExtracaoDados:
             posts.append({
                 'created_at': post['date'],
                 'url': post['postUrl'],
-                'title': None,
+                #'title': None,
                 'score': post['statistics']['actual']['likeCount'], 
                 'text': post['message'],
                 'length': len(post['message'])
