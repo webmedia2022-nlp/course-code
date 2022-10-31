@@ -1,3 +1,3 @@
 from ExtracaoConhecimento.Clustering import Clustering 
 from ExtracaoConhecimento.SemanticComprehension import SemanticComprehension 
-from ExtracaoConhecimento.EmotionComprehension import EmotionComprehension 
+from ExtracaoConhecimento.SentimentAnalysis import SentimentAnalysis 
