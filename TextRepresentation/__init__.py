@@ -1,0 +1,4 @@
+from TextRepresentation.statisticalModels import StatisticalModels
+from TextRepresentation.sentenceEmbeddings import SentenceEmbeddings
+from TextRepresentation.wordEmbeddings import WordEmbeddings
+

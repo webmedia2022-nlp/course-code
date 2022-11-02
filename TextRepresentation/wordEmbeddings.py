@@ -22,9 +22,6 @@ class WordEmbeddings:
     def word2vec(self, sentences):
         model = Word2Vec(sentences, min_count=1)
         return model
-
-    def glove(self, sentences):
-        pass
-
+        
     def fasttext(self,sentences):
         return FastText(sentences, min_count=1)
