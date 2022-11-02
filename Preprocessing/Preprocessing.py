@@ -16,42 +16,50 @@ class Preprocessing:
         self.lemmatizer = WordNetLemmatizer()
         self.nlp = spacy.load('en_core_web_sm')
 
-    def nlp_pipeline(self, texto):
+    
+    def nlp_pipeline(self, text):
 
-        doc = self.nlp(texto)
+        doc = self.nlp(text)
 
         tokens, pos_tags, lemmas = [], [], []
 
         for token in doc:
-            tokens.append(token.text)
-            pos_tags.append(token.pos_)
-            lemmas.append(token.lemma_)
+
+            if token.text.strip():
+                tokens.append(token.text.lower())
+                pos_tags.append(token.pos_)
+                lemmas.append(token.lemma_.lower())
+            else:
+                pass
 
         return tokens, pos_tags, lemmas
 
-    def normalizacao(self, texto):
-        texto_normalizado = texto.lower()
-        return texto_normalizado
+    
+    def normalization(self, text):
+        text = text.lower()
+        return text
 
-    def tokenizacao(self, texto):
-        tokens = word_tokenize(texto)
+    
+    def tokenization(self, text):
+        tokens = word_tokenize(text)
         return tokens
     
-    def stemmizacao(self, tokens):
+    
+    def stemming(self, tokens):
         stem = self.stemmer.stem
         stems = [stem(t) for t in tokens]
         return stems
 
-    def lemmatizacao(self, tokens):
+    
+    def lemmatization(self, tokens):
         lemma = self.lemmatizer.lemmatize
         lemmas = [lemma(t) for t in tokens]
         return lemmas
     
-    def limpeza_regex(self, texto, padrao, valor=" "):
-
-        texto = re.sub(padrao, " {valor} ".format(valor=valor), texto)
-
-        return texto
+    
+    def clean_regex(self, text, pattern, value=" "):
+        text = re.sub(pattern, " {value} ".format(value=value), text)
+        return text.strip()
 
 
     def load_tokenizer(self):
