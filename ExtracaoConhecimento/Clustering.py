@@ -26,6 +26,3 @@ class Clustering:
 
     def deteccao_comunidades(self):
         pass
-
-    def topic_modeling(self):
-        pass
