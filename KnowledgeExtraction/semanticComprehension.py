@@ -11,7 +11,7 @@ Updated in Sep 28th , 2022.
 
 """
 from Preprocessing import Preprocessing
-from ModelosRepresentacao import SentenceEmbeddings
+from TextRepresentation import SentenceEmbeddings
 
 
 from keras.models import Model

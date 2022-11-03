@@ -1,6 +1,7 @@
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
+import nltk
 from tqdm import tqdm
 import pandas as pd 
 import keras.utils as np_utils
@@ -44,7 +45,6 @@ class Preprocessing:
         tokens = word_tokenize(text)
         return tokens
     
-    
     def stemming(self, tokens):
         stem = self.stemmer.stem
         stems = [stem(t) for t in tokens]
@@ -55,7 +55,10 @@ class Preprocessing:
         lemma = self.lemmatizer.lemmatize
         lemmas = [lemma(t) for t in tokens]
         return lemmas
-    
+
+    def pos_tagging(self, tokens):
+        pos_tags = nltk.pos_tag(tokens)
+        return pos_tags 
     
     def clean_regex(self, text, pattern, value=" "):
         text = re.sub(pattern, " {value} ".format(value=value), text)
