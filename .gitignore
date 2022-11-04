@@ -1,5 +1,9 @@
 data/ 
 data/*.json
+
+# don't ignore this files in data dir
+!data/emotional_sentences_LIWC.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
