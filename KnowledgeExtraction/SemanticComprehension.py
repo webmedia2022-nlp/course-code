@@ -134,7 +134,6 @@ class SemanticComprehension:
         return intents
 
     
-
     def plot_confusion_matrix(self, y_test, y_hat, classes, fname):
         cm = confusion_matrix(y_test, y_hat, normalize='true')
         df_cm = pd.DataFrame(cm, index=classes, columns=classes)
