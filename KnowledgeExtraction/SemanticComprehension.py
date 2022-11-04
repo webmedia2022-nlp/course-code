@@ -113,7 +113,7 @@ class SemanticComprehension:
         return model, X_test, y_test
 
 
-    def predicao_intencoes(self, model, sentences):
+    def predict_intents(self, model, sentences):
         # Predição de intents para os tweets coletados
         X = SentenceEmbeddings().labse(sentences)
         X.shape
