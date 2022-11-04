@@ -11,15 +11,16 @@ Updated in Sep 28th , 2022.
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.decomposition import PCA
+from sklearn.decomposition import SparsePCA
 
-import pandas as pd 
+import pandas as pd
+
 
 class StatisticalModels:
 
     def __init__(self):
         pass
-        
+
     def bow(self, dados):
         bow_modelo = CountVectorizer()
         bow_transformacao = bow_modelo.fit_transform(dados)
@@ -27,12 +28,11 @@ class StatisticalModels:
 
     def tfidf(self, dados):
         tfidf_modelo = TfidfVectorizer(max_df=0.95, min_df=2)
-        tfidf_transformacao = tfidf_modelo.fit_transform(dados)   
+        tfidf_transformacao = tfidf_modelo.fit_transform(dados)
         return tfidf_modelo, tfidf_transformacao
 
     def pca(self, dados, n_components = 2):
-
-        pca_model = PCA(n_components=n_components)
+        pca_model = SparsePCA(n_components=n_components)
         pca_transformacao = pca_model.fit_transform(dados)
 
         return pca_model, pca_transformacao
