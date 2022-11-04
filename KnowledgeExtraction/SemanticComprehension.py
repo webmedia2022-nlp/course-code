@@ -40,7 +40,7 @@ class SemanticComprehension:
         if algorithm == "labse":
             y = Preprocessing().target_encoder(intents, intent_classes)
             model, X_test, y_test = self.labse_model(sentences, y)
-        elif algorithm == "bilstm":
+        elif algorithm == "bilstm" or algorithm == "rnn":
             ## One-hot encoding of target classes
             onehot_y = Preprocessing().onehot_encoder(intents, intent_classes)
             model, X_test, y_test = self.bilstm_model(sentences, y, onehot_y, len(intent_classes))
