@@ -113,7 +113,7 @@ class SemanticComprehension:
         return model, X_test, y_test
 
 
-    def predicao_intencoes(self, model, sentences):
+    def predict_intents(self, model, sentences):
         # Predição de intents para os tweets coletados
         X = SentenceEmbeddings().labse(sentences)
         X.shape
@@ -134,7 +134,6 @@ class SemanticComprehension:
         return intents
 
     
-
     def plot_confusion_matrix(self, y_test, y_hat, classes, fname):
         cm = confusion_matrix(y_test, y_hat, normalize='true')
         df_cm = pd.DataFrame(cm, index=classes, columns=classes)
