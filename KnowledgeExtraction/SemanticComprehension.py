@@ -28,6 +28,7 @@ sns.set(font_scale=2.0)
 
 import pandas as pd 
 import numpy as np
+import spacy
 
 class SemanticComprehension:
 
@@ -150,5 +151,18 @@ class SemanticComprehension:
         return
 
 
-    def extracao_entidades(self):
-        pass
+    def ner(self, sentence):
+        entities = []
+        nlp = spacy.load('en_core_web_sm')
+        doc = nlp(sentence)
+        entity = {}
+        for i, ent in enumerate(doc.ents):
+            entity[i] = {
+                        "value":ent.text,
+                        "entity":ent.label_,
+                        "start":ent.start_char,
+                        "end":ent.end_char
+                    }
+            entities.append(entity)
+
+        return entities
