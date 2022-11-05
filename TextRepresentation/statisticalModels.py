@@ -31,8 +31,7 @@ class StatisticalModels:
         tfidf_transformacao = tfidf_modelo.fit_transform(dados)
         return tfidf_modelo, tfidf_transformacao
 
-    def pca(self, dados, n_components=2):
-
+    def pca(self, dados, n_components = 2):
         pca_model = SparsePCA(n_components=n_components)
         pca_transformacao = pca_model.fit_transform(dados)
 

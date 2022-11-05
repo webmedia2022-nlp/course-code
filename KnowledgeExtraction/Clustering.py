@@ -56,6 +56,3 @@ class Clustering:
     def hierarquical(self, data, n_clusters, linkage_method='ward'):
         ac_model = AgglomerativeClustering(n_clusters=n_clusters, affinity='euclidean', linkage=linkage_method)
         return ac_model.fit(data)
-
-    def deteccao_comunidades(self):
-        pass

@@ -28,6 +28,7 @@ sns.set(font_scale=2.0)
 
 import pandas as pd 
 import numpy as np
+import spacy
 
 class SemanticComprehension:
 
@@ -40,7 +41,7 @@ class SemanticComprehension:
         if algorithm == "labse":
             y = Preprocessing().target_encoder(intents, intent_classes)
             model, X_test, y_test = self.labse_model(sentences, y)
-        elif algorithm == "bilstm":
+        elif algorithm == "bilstm" or algorithm == "rnn":
             ## One-hot encoding of target classes
             onehot_y = Preprocessing().onehot_encoder(intents, intent_classes)
             model, X_test, y_test = self.bilstm_model(sentences, y, onehot_y, len(intent_classes))
@@ -113,7 +114,7 @@ class SemanticComprehension:
         return model, X_test, y_test
 
 
-    def predicao_intencoes(self, model, sentences):
+    def predict_intents(self, model, sentences):
         # Predição de intents para os tweets coletados
         X = SentenceEmbeddings().labse(sentences)
         X.shape
@@ -134,7 +135,6 @@ class SemanticComprehension:
         return intents
 
     
-
     def plot_confusion_matrix(self, y_test, y_hat, classes, fname):
         cm = confusion_matrix(y_test, y_hat, normalize='true')
         df_cm = pd.DataFrame(cm, index=classes, columns=classes)
@@ -151,5 +151,18 @@ class SemanticComprehension:
         return
 
 
-    def extracao_entidades(self):
-        pass
+    def ner(self, sentence):
+        entities = []
+        nlp = spacy.load('en_core_web_sm')
+        doc = nlp(sentence)
+        entity = {}
+        for i, ent in enumerate(doc.ents):
+            entity[i] = {
+                        "value":ent.text,
+                        "entity":ent.label_,
+                        "start":ent.start_char,
+                        "end":ent.end_char
+                    }
+            entities.append(entity)
+
+        return entities
