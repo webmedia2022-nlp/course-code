@@ -33,6 +33,3 @@ class Clustering:
 
     def hierarquico(self):
         pass
-
-    def deteccao_comunidades(self):
-        pass
