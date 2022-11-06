@@ -114,21 +114,18 @@ class SemanticComprehension:
         return model, X_test, y_test
 
 
-    def predict_intents(self, model, sentences):
+    def predict_intents(self, model, sentences, intent_classes):
         # Predição de intents para os tweets coletados
         X = SentenceEmbeddings().labse(sentences)
         X.shape
 
         y_hat = model.predict(X)
-        conf_dist = model.decision_function(X)
-        confidence = [round(conf_dist[i][y_hat[i]],3) for i in range(y_hat.shape[0])]
 
         predicted_intents = []
         for i in range(len(y_hat)):
             predicted_intents.append({
             "text": sentences[i],
-            "intent": intent_classes[y_hat[i]],
-            "confidence":confidence[i]
+            "intent": intent_classes[y_hat[i]]
             })
 
         intents = pd.DataFrame(predicted_intents)
