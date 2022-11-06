@@ -25,3 +25,4 @@ google-api-python-client==2.65.0
 pyLDAvis==3.3.1
 kneebow==1.0.1
 networkx==2.6.3
+Unidecode==1.1.1
