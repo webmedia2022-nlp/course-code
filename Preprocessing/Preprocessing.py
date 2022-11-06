@@ -107,3 +107,13 @@ class Preprocessing:
         onehot = np_utils.to_categorical(array, num_classes=len(classes))
         encoded_data = np.array(onehot)
         return encoded_data
+
+    def spacy_simple_preprocess(self, text):
+
+        # Usa o Spacy para lematizar o texto e remover stop words
+        spacy_doc = self.nlp(text)
+        tokens = [token.lemma_.lower() for token in spacy_doc if token.lemma_.lower() and not token.is_stop]
+        return tokens
+
+    def tokens_to_text(self, tokens):
+        return ' '.join([token.strip() for token in tokens if len(token.strip()) > 0])
